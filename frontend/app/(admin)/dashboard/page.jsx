@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Package, CheckCircle2, Boxes, DollarSign } from "lucide-react";
+import { Package, CheckCircle2, Boxes, DollarSign, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { getDashboard } from "@/lib/api";
 import { StatCard } from "@/components/admin/stat-card";
@@ -26,7 +26,7 @@ import { formatCurrency, formatDateTime } from "@/lib/utils";
 export default function DashboardPage() {
   const { token } = useAuth();
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, isFetching, error } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => getDashboard(token),
     enabled: Boolean(token),
@@ -35,7 +35,12 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+          Dashboard
+          {isFetching && !isLoading && (
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          )}
+        </h1>
         <p className="text-muted-foreground mt-1">
           A snapshot of inventory and sales activity.
         </p>

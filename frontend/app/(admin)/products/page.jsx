@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Pencil, Plus, Search, ShoppingCart, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Pencil, Plus, Search, ShoppingCart, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import {
   ApiRequestError,
@@ -72,7 +72,7 @@ export default function ProductsPage() {
     enabled: Boolean(token),
   });
 
-  const { data: products, isLoading } = useQuery({
+  const { data: products, isLoading, isFetching } = useQuery({
     queryKey: ["products", status, categoryId, skip, debouncedSearch],
     queryFn: () =>
       getProducts(
@@ -224,8 +224,11 @@ export default function ProductsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="flex items-center gap-2">
             {status === "in_stock" ? "In Stock" : "Sold"} Products
+            {isFetching && !isLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -301,9 +304,18 @@ export default function ProductsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              disabled={
+                                deleteMutation.isPending &&
+                                deleteMutation.variables === product.id
+                              }
                               onClick={() => handleDelete(product)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              {deleteMutation.isPending &&
+                              deleteMutation.variables === product.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
                             </Button>
                           )}
                         </div>

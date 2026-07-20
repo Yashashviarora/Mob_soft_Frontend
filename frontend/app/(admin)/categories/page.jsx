@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import {
   ApiRequestError,
@@ -53,7 +53,7 @@ export default function CategoriesPage() {
   const [formError, setFormError] = useState(null);
   const [listError, setListError] = useState(null);
 
-  const { data: categories, isLoading } = useQuery({
+  const { data: categories, isLoading, isFetching } = useQuery({
     queryKey: ["categories"],
     queryFn: () => getCategories(token),
     enabled: Boolean(token),
@@ -155,7 +155,12 @@ export default function CategoriesPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Categories</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            All Categories
+            {isFetching && !isLoading && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -188,6 +193,10 @@ export default function CategoriesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            disabled={
+                              deleteMutation.isPending &&
+                              deleteMutation.variables === category.id
+                            }
                             onClick={() => openEdit(category)}
                           >
                             <Pencil className="h-4 w-4" />
@@ -195,9 +204,18 @@ export default function CategoriesPage() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            disabled={
+                              deleteMutation.isPending &&
+                              deleteMutation.variables === category.id
+                            }
                             onClick={() => handleDelete(category)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            {deleteMutation.isPending &&
+                            deleteMutation.variables === category.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
                           </Button>
                         </div>
                       ) : (
