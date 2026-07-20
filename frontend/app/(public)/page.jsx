@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { getPublicCategories, getPublicProducts } from "@/lib/api";
 import { ProductCard } from "@/components/public/product-card";
 import { SearchBar } from "@/components/public/search-bar";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default async function HomePage({ searchParams }) {
   const search = searchParams.search?.trim() || undefined;
@@ -38,14 +38,24 @@ export default async function HomePage({ searchParams }) {
       {!search && categories.length > 0 && (
         <section>
           <h2 className="text-lg font-semibold mb-4">Shop by category</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {categories.map((c) => (
-              <Link key={c.id} href={`/category/${c.id}`}>
-                <Card className="transition-shadow hover:shadow-md">
-                  <CardContent className="p-5 text-center font-medium">
-                    {c.name}
-                  </CardContent>
-                </Card>
+              <Link key={c.id} href={`/category/${c.id}`} className="group relative block">
+                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-orange-400 via-fuchsia-500 to-purple-600 opacity-0 blur-md transition duration-500 group-hover:opacity-70" />
+                <div className="relative flex h-full min-h-[160px] flex-col justify-between rounded-2xl bg-muted/60 p-5">
+                  <div>
+                    <h3 className="text-lg font-semibold tracking-tight">{c.name}</h3>
+                    {c.description && (
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-3">
+                        {c.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="mt-4 flex items-center gap-1.5 text-sm font-medium">
+                    Explore
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
               </Link>
             ))}
           </div>

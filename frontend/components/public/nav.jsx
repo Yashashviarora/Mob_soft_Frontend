@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Store } from "lucide-react";
 import { getPublicCategories } from "@/lib/api";
+import { NavLinks } from "./nav-links";
 
 export async function PublicNav() {
   let categories = [];
@@ -18,15 +19,7 @@ export async function PublicNav() {
           ShopFlow
         </Link>
         <nav className="hidden md:flex items-center gap-1 overflow-x-auto">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/category/${c.id}`}
-              className="px-3 py-2 text-sm rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors whitespace-nowrap"
-            >
-              {c.name}
-            </Link>
-          ))}
+          <NavLinks categories={categories} variant="desktop" />
         </nav>
         <Link
           href="/login"
@@ -37,15 +30,7 @@ export async function PublicNav() {
       </div>
       {categories.length > 0 && (
         <div className="container flex md:hidden gap-1 overflow-x-auto pb-3">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              href={`/category/${c.id}`}
-              className="px-3 py-1.5 text-sm rounded-md border whitespace-nowrap"
-            >
-              {c.name}
-            </Link>
-          ))}
+          <NavLinks categories={categories} variant="mobile" />
         </div>
       )}
     </header>
